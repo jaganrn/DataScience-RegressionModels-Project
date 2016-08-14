@@ -51,7 +51,9 @@ As stated eaerlier these conclusions are based on the limited dataset of 32 whic
 
 \pagebreak
 
-#### **APPENDIX**
+\begin{center}
+APPENDIX
+\end{center}
 
 #### **1) Exploratory Data Analysis**
 

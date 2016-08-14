@@ -1,0 +1,120 @@
+---
+title: 'Data Science: Regression Models Course Project'
+author: "Jagannatha Reddy"
+date: "August 13, 2016"
+output: pdf_document
+---
+
+#### **Problem Description** 
+
+In this project we will be looking at a data set of a collection of cars in the **mtcars** available as part of the **datasets** package of R, and explore the relationship between a set of variables and miles per gallon (MPG) (outcome). Our main focus would be in answering the following two questions:
+
+1. “Is an automatic or manual transmission better for MPG”
+2. "Quantify the MPG difference between automatic and manual transmissions" 
+
+#### **Executive Summary**
+
+Based on the analysis done on **mtcars** (from Motor Trend Car Road Tests data) data it is evident that Manual transmission vehicles give better MPG (Miles per US Gallon) compared to Automatic transmission vehicles. Also looking at the different models and exploration of data it is clear that other factors like number of Cylinders, and weight of the vehicle affect the MPG of the vehicle. This analysis is done only based on the dataset available only from 32 vehicles I strongly feel this data is not statistically significant. One more factor that should be considered is that data is obtained in 1974 and hence might be obsolete given the latest developments in the automotive industry
+
+These conclusions are based on the limited dataset of 32. Though the results are consistent the data used for analysis doesn't appear to be statistically significant
+
+#### **1) Load and prepare the mtcars data**
+
+```{r}
+cache=TRUE
+# load the required libraries
+library(datasets)
+data(mtcars)
+head(mtcars, 2)
+mtcars$am <- as.factor(mtcars$am) # make the am value as factor
+levels(mtcars$am) <- c("Automatic", "Manual") # 0 - Automatic, 1 - Manual
+```
+
+You can observe that there are totally `r dim(mtcars)[1]` records in the mtcars dataset with each record having `r dim(mtcars)[2]` columns to represent various properties (like MPG, Cylinders, Weight, etc.) of each of the vehicles
+
+#### **2) Is an automatic or manual transmission better for MPG**
+
+```{r}
+aggregate(mpg ~ am, data=mtcars, FUN=mean)
+library(ggplot2)
+g<-ggplot(aes(y=mpg,x=am), data=mtcars)+geom_boxplot(aes(fill=am))
+g+labs(x="Transmission", y="Miles per Gallon (MPG)", title="MPG as a function of Transmission")
+```
+
+You can observe that MPG value for Manual transmission is 24.39 which is significantly higher compared to that of Automatic transmission value of 17.15
+
+#### **3) Quantify the MPG difference between automatic and manual transmissions**
+
+Based on the analysis done in the **Different Models** section of Apendix, you can observe that R squared values are consistently high for cylinder & weight to mpg and displacement, cylinder, & weight to mpg for both categories of transmissions. This indicate these 2 combinations are better fits compared to the rest of the models. Various models also indicate that fuel efficiency is influenced by several properties of the vehicles.
+
+As stated eaerlier these conclusions are based on the limited dataset of 32 which isn't statistically significant.
+
+\pagebreak
+
+#### **APPENDIX**
+
+#### **1) Exploratory Data Analysis**
+
+```{r}
+#convert to factors
+mtcars$cyl <- as.factor(mtcars$cyl)
+mtcars$vs <- as.factor(mtcars$vs)
+mtcars$gear <- as.factor(mtcars$gear)
+mtcars$carb <- as.factor(mtcars$carb)
+summary(mtcars)
+g<-ggplot(data = mtcars, aes(mpg)) + geom_histogram() + facet_grid(.~am)
+g+labs(x = "Miles per Gallon (MPG)", y = "Frequency", title = "MPG Histogram as a function of Transmission")
+
+#explore the relationship between weight and mpg
+plot(mtcars$wt, mtcars$mpg, xlab="Weight", ylab="mpg")
+fit<-lm(mpg~wt, data=mtcars)
+abline(fit)
+```
+
+
+#### **2) Different Models**
+
+Let us explore how different vehicle properties influence the fuel efficiency of theAutomatic and Manual transmission vehicles
+
+
+```{r}
+aModel1 <- lm(mpg ~ cyl, data=mtcars[mtcars$am=='Automatic',])
+aModel2 <- lm(mpg ~ wt, data = mtcars[mtcars$am=='Automatic',])
+aModel3 <- lm(mpg ~ cyl + wt, data = mtcars[mtcars$am=='Automatic',])
+aModel4 <- lm(mpg ~ disp, data = mtcars[mtcars$am=='Automatic',])
+aModel5 <- lm(mpg ~ disp + cyl, data = mtcars[mtcars$am=='Automatic',])
+aModel6 <- lm(mpg ~ disp + cyl + wt, data = mtcars[mtcars$am=='Automatic',])
+aModel7 <- lm(mpg ~ gear, data = mtcars[mtcars$am=='Automatic',])
+```
+
+These models result in the following R squared values for Automatic transmission vehicles
+
+1. model-1: cylinders to mpg: **`r round(summary(aModel1)$r.squared,2)`**
+1. model-2: weight to mpg: **`r round(summary(aModel2)$r.squared,2)`**
+1. model-3: cylinders and weight to mpg: **`r round(summary(aModel3)$r.squared,2)`**
+1. model-4: displacement to mpg: **`r round(summary(aModel4)$r.squared,2)`**
+1. model-5: displacement and cylinders to mpg: **`r round(summary(aModel5)$r.squared,2)`**
+1. model-6: displacement, cylinders and weight to mpg: **`r round(summary(aModel6)$r.squared,2)`**
+1. model-7: gear to mpg: **`r round(summary(aModel7)$r.squared,2)`**
+```{r}
+
+mModel1 <- lm(mpg ~ cyl, data=mtcars[mtcars$am=='Manual',])
+mModel2 <- lm(mpg ~ wt, data = mtcars[mtcars$am=='Manual',])
+mModel3 <- lm(mpg ~ cyl + wt, data = mtcars[mtcars$am=='Manual',])
+mModel4 <- lm(mpg ~ disp, data = mtcars[mtcars$am=='Manual',])
+mModel5 <- lm(mpg ~ disp + cyl, data = mtcars[mtcars$am=='Manual',])
+mModel6 <- lm(mpg ~ disp + cyl + wt, data = mtcars[mtcars$am=='Manual',])
+mModel7 <- lm(mpg ~ gear, data = mtcars[mtcars$am=='Manual',])
+```
+
+These models result in the following R squared values for Manual transmission vehicles
+
+1. model-1: cylinders to mpg: **`r round(summary(mModel1)$r.squared,2)`**
+1. model-2: weight to mpg: **`r round(summary(mModel2)$r.squared,2)`**
+1. model-3: cylinders and weight to mpg: **`r round(summary(mModel3)$r.squared,2)`**
+1. model-4: displacement to mpg: **`r round(summary(mModel4)$r.squared,2)`**
+1. model-5: displacement and cylinders to mpg: **`r round(summary(mModel5)$r.squared,2)`**
+1. model-6: displacement, cylinders and weight to mpg: **`r round(summary(mModel6)$r.squared,2)`**
+1. model-7: gear to mpg: **`r round(summary(mModel7)$r.squared,2)`**
+
+You can observe that R squared values are consistently high for cylinder & weight to mpg and displacement, cylinder, & weight to mpg for both categories of transmissions. This indicate these 2 combinations are better fits compared to the rest of the models.

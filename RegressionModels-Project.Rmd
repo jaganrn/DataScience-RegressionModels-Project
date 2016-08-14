@@ -25,7 +25,7 @@ cache=TRUE
 # load the required libraries
 library(datasets)
 data(mtcars)
-head(mtcars, 2)
+#head(mtcars, 2)
 mtcars$am <- as.factor(mtcars$am) # make the am value as factor
 levels(mtcars$am) <- c("Automatic", "Manual") # 0 - Automatic, 1 - Manual
 ```
@@ -36,48 +36,13 @@ You can observe that there are totally `r dim(mtcars)[1]` records in the mtcars 
 
 ```{r}
 aggregate(mpg ~ am, data=mtcars, FUN=mean)
-library(ggplot2)
-g<-ggplot(aes(y=mpg,x=am), data=mtcars)+geom_boxplot(aes(fill=am))
-g+labs(x="Transmission", y="Miles per Gallon (MPG)", title="MPG as a function of Transmission")
 ```
 
-You can observe that MPG value for Manual transmission is 24.39 which is significantly higher compared to that of Automatic transmission value of 17.15
+You can observe that MPG value for Manual transmission is 24.39 which is significantly higher compared to that of Automatic transmission value of 17.15. The boxplot available in Appendix also concludes the same result
 
 #### **3) Quantify the MPG difference between automatic and manual transmissions**
 
-Based on the analysis done in the **Different Models** section of Apendix, you can observe that R squared values are consistently high for cylinder & weight to mpg and displacement, cylinder, & weight to mpg for both categories of transmissions. This indicate these 2 combinations are better fits compared to the rest of the models. Various models also indicate that fuel efficiency is influenced by several properties of the vehicles.
-
-As stated eaerlier these conclusions are based on the limited dataset of 32 which isn't statistically significant.
-
-\pagebreak
-
-\begin{center}
-APPENDIX
-\end{center}
-
-#### **1) Exploratory Data Analysis**
-
-```{r}
-#convert to factors
-mtcars$cyl <- as.factor(mtcars$cyl)
-mtcars$vs <- as.factor(mtcars$vs)
-mtcars$gear <- as.factor(mtcars$gear)
-mtcars$carb <- as.factor(mtcars$carb)
-summary(mtcars)
-g<-ggplot(data = mtcars, aes(mpg)) + geom_histogram() + facet_grid(.~am)
-g+labs(x = "Miles per Gallon (MPG)", y = "Frequency", title = "MPG Histogram as a function of Transmission")
-
-#explore the relationship between weight and mpg
-plot(mtcars$wt, mtcars$mpg, xlab="Weight", ylab="mpg")
-fit<-lm(mpg~wt, data=mtcars)
-abline(fit)
-```
-
-
-#### **2) Different Models**
-
 Let us explore how different vehicle properties influence the fuel efficiency of theAutomatic and Manual transmission vehicles
-
 
 ```{r}
 aModel1 <- lm(mpg ~ cyl, data=mtcars[mtcars$am=='Automatic',])
@@ -120,3 +85,34 @@ These models result in the following R squared values for Manual transmission ve
 1. model-7: gear to mpg: **`r round(summary(mModel7)$r.squared,2)`**
 
 You can observe that R squared values are consistently high for cylinder & weight to mpg and displacement, cylinder, & weight to mpg for both categories of transmissions. This indicate these 2 combinations are better fits compared to the rest of the models.
+
+Based on the analysis done and also looking at the graphs in Apendix, you can observe that R squared values are consistently high for cylinder & weight to mpg and displacement, cylinder, & weight to mpg for both categories of transmissions. This indicate these 2 combinations are better fits compared to the rest of the models. Various models also indicate that fuel efficiency is influenced by several properties of the vehicles.
+
+As stated eaerlier these conclusions are based on the limited dataset of 32 which isn't statistically significant.
+
+\pagebreak
+
+\begin{center}
+APPENDIX
+\end{center}
+
+```{r}
+#boxplot of mpg as a function of transmission
+library(ggplot2)
+g<-ggplot(aes(y=mpg,x=am), data=mtcars)+geom_boxplot(aes(fill=am))
+g+labs(x="Transmission", y="Miles per Gallon (MPG)", title="MPG as a function of Transmission")
+
+#convert to factors
+mtcars$cyl <- as.factor(mtcars$cyl)
+mtcars$vs <- as.factor(mtcars$vs)
+mtcars$gear <- as.factor(mtcars$gear)
+mtcars$carb <- as.factor(mtcars$carb)
+summary(mtcars)
+g<-ggplot(data = mtcars, aes(mpg)) + geom_histogram() + facet_grid(.~am)
+g+labs(x = "Miles per Gallon (MPG)", y = "Frequency", title = "MPG Histogram as a function of Transmission")
+
+#explore the relationship between weight and mpg
+plot(mtcars$wt, mtcars$mpg, xlab="Weight", ylab="mpg", main="Relationship between weight & mpg")
+fit<-lm(mpg~wt, data=mtcars)
+abline(fit)
+```

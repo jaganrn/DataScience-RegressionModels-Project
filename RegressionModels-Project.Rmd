@@ -1,7 +1,7 @@
 ---
 title: 'Data Science: Regression Models Course Project'
 author: "Jagannatha Reddy"
-date: "August 13, 2016"
+date: "September 03, 2016"
 output: pdf_document
 ---
 
@@ -38,7 +38,7 @@ You can observe that there are totally `r dim(mtcars)[1]` records in the mtcars 
 aggregate(mpg ~ am, data=mtcars, FUN=mean)
 ```
 
-You can observe that MPG value for Manual transmission is 24.39 which is significantly higher compared to that of Automatic transmission value of 17.15. The boxplot available in Appendix also concludes the same result
+You can observe that MPG value for Manual transmission is 24.39 which is significantly higher compared to that of Automatic transmission value of 17.15. Even the statistical inference & boxplot available in Appendix also concludes the same result
 
 #### **3) Quantify the MPG difference between automatic and manual transmissions**
 
@@ -96,23 +96,32 @@ As stated eaerlier these conclusions are based on the limited dataset of 32 whic
 APPENDIX
 \end{center}
 
+#### **A) Boxplot of mpg as a function of transmission**
+
 ```{r}
 #boxplot of mpg as a function of transmission
 library(ggplot2)
 g<-ggplot(aes(y=mpg,x=am), data=mtcars)+geom_boxplot(aes(fill=am))
 g+labs(x="Transmission", y="Miles per Gallon (MPG)", title="MPG as a function of Transmission")
-
-#convert to factors
-mtcars$cyl <- as.factor(mtcars$cyl)
-mtcars$vs <- as.factor(mtcars$vs)
-mtcars$gear <- as.factor(mtcars$gear)
-mtcars$carb <- as.factor(mtcars$carb)
-summary(mtcars)
-g<-ggplot(data = mtcars, aes(mpg)) + geom_histogram() + facet_grid(.~am)
-g+labs(x = "Miles per Gallon (MPG)", y = "Frequency", title = "MPG Histogram as a function of Transmission")
-
-#explore the relationship between weight and mpg
-plot(mtcars$wt, mtcars$mpg, xlab="Weight", ylab="mpg", main="Relationship between weight & mpg")
-fit<-lm(mpg~wt, data=mtcars)
-abline(fit)
 ```
+
+#### **B) Statistical Inference**
+
+Here we perform a t-test on mpg versus different transmissions
+
+```{r}
+#Perform Student's t-test on transmissions versus mpg
+t.test(mpg~am, data=mtcars)
+```
+Based on the results, we can reject a null hypothesis that the effect of manual and automatic transmissions on mpg are the same
+
+#### **C) Residual Plot for displacement, cylinders and weight to mpg model**
+
+```{r}
+#boxplot of mpg as a function of transmission
+summary(aModel6)
+par(mfrow=c(2,2))
+plot(aModel6)
+```
+
+You can observe that R squared values are consistently high displacement, cylinder, & weight to mpg for both categories of transmissions. This indicate these 2 combinations are better fits compared to the rest of the models.
